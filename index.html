@@ -589,9 +589,14 @@
   </div>
 
   <!-- PAGE 1: 合作意向 -->
-  <div class="page" id="page-1" style="display:none;">
-    <div class="section">
-      <div class="section-title">贊助等級</div>
+<div class="page" id="page-1" style="display:none;">
+  <div class="section">
+    <div class="section-title">贊助方案總覽</div>
+    <img src="sponsor-tiers.png" alt="贊助方案對照表" style="width:100%;border-radius:8px;border:1px solid #CBD5E1;margin-bottom:0.5rem;" />
+    <p style="font-size:12px;color:#94A3B8;margin-top:6px;">請參考上表選擇適合的贊助等級，再於下方點選確認。</p>
+  </div>
+  <div class="section">
+    <div class="section-title">贊助等級</div>
 
       <div class="tier-group">
         <div class="tier-group-header">
@@ -617,8 +622,17 @@
     </div>
 
     <div class="section">
-      <div class="section-title">合作類型（可複選）</div>
-      <div class="pill-group" id="collabPills"></div>
+      <div class="section-title">是否參與市集攤位？</div>
+      <div class="radio-list" style="margin-bottom:1rem;">
+        <label class="radio-row">
+          <input type="radio" name="joinBooth" value="是" onchange="toggleBooth(true)">
+          是，我想申請市集攤位
+        </label>
+        <label class="radio-row">
+          <input type="radio" name="joinBooth" value="否" onchange="toggleBooth(false)">
+          否，不參與市集
+        </label>
+      </div>
 
       <div class="booth-box" id="boothBox">
         <div class="booth-box-title">市集攤位 — 補充資訊</div>
@@ -769,18 +783,6 @@ function init() {
     });
   });
 
-  // Render collab pills
-  const pillsEl = document.getElementById("collabPills");
-  COLLAB.forEach(c => {
-    const btn = document.createElement("button");
-    btn.type = "button";
-    btn.className = "pill";
-    btn.id = "pill-" + c.id;
-    btn.textContent = c.label;
-    btn.onclick = () => toggleCollab(c.id);
-    pillsEl.appendChild(btn);
-  });
-
   // Power radio grid
   const powerEl = document.getElementById("powerGrid");
   POWER.forEach(p => {
@@ -816,18 +818,11 @@ function selectTier(id) {
   });
 }
 
-function toggleCollab(id) {
-  const btn = document.getElementById("pill-" + id);
-  if (state.collabTypes.includes(id)) {
-    state.collabTypes = state.collabTypes.filter(x => x !== id);
-    btn.classList.remove("active");
-  } else {
-    state.collabTypes.push(id);
-    btn.classList.add("active");
-  }
-  document.getElementById("boothBox").classList.toggle("visible", state.collabTypes.includes("booth"));
+function toggleBooth(show) {
+  state.joinBooth = show ? "是" : "否";
+  document.getElementById("boothBox").classList.toggle("visible", show);
 }
-
+  
 // ── NAVIGATION ──────────────────────────────
 function updateNav() {
   const s = state.step;
@@ -904,7 +899,7 @@ async function submitForm() {
     email:       document.getElementById("email").value.trim(),
     social:      document.getElementById("social").value.trim(),
     tier:        TIERS.find(t => t.id === state.tier) ? `${TIERS.find(t=>t.id===state.tier).price} ${TIERS.find(t=>t.id===state.tier).label}` : "未選擇",
-    collabTypes: state.collabTypes.map(id => COLLAB.find(c=>c.id===id)?.label).join("、"),
+    collabTypes: state.joinBooth || "否",
     boothPower:  state.boothPower,
     boothSize:   document.getElementById("boothSize").value.trim(),
     boothItems:  document.getElementById("boothItems").value.trim(),
