@@ -1,0 +1,973 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>2026 濱海搖滾音樂祭 — 招商合作申請</title>
+
+<!--
+  ════════════════════════════════════════════════════════════
+  GOOGLE SHEET 串接說明 (設定一次即可)
+  ════════════════════════════════════════════════════════════
+
+  步驟 1：建立 Google Sheet
+    ① 開啟 https://sheets.google.com 並新增試算表
+    ② 第一列（欄位名稱）請依序填入：
+       時間戳記 | 品牌名稱 | 統一編號 | 聯絡人 | 電話 | Email |
+       社群連結 | 贊助等級 | 合作類型 | 攤位電力 | 攤位面積 |
+       攤位商品 | 得知管道 | 品牌簡介 | 目標受眾 | 合作目標 |
+       過往經驗 | 備註
+
+  步驟 2：建立 Apps Script Web App
+    ① 在試算表上方選單點「擴充功能」→「Apps Script」
+    ② 刪除預設內容，貼入以下程式碼：
+
+    ─── Apps Script 程式碼開始 ─────────────────────────────
+
+    const SHEET_NAME = "招商報名";  // 若你的工作表名稱不同請修改
+
+    function doPost(e) {
+      const ss = SpreadsheetApp.getActiveSpreadsheet();
+      let sheet = ss.getSheetByName(SHEET_NAME);
+      if (!sheet) sheet = ss.insertSheet(SHEET_NAME);
+
+      const data = JSON.parse(e.postData.contents);
+      const row = [
+        new Date().toLocaleString("zh-TW"),
+        data.brandName   || "",
+        data.ubn         || "",
+        data.contact     || "",
+        data.phone       || "",
+        data.email       || "",
+        data.social      || "",
+        data.tier        || "",
+        data.collabTypes || "",
+        data.boothPower  || "",
+        data.boothSize   || "",
+        data.boothItems  || "",
+        data.referral    || "",
+        data.brandIntro  || "",
+        data.audience    || "",
+        data.goal        || "",
+        data.pastExp     || "",
+        data.notes       || "",
+      ];
+      sheet.appendRow(row);
+
+      return ContentService
+        .createTextOutput(JSON.stringify({ result: "success" }))
+        .setMimeType(ContentService.MimeType.JSON);
+    }
+
+    ─── Apps Script 程式碼結束 ─────────────────────────────
+
+    ③ 儲存（Ctrl+S），命名為「濱海祭招商表單」
+    ④ 點「部署」→「新增部署項目」
+    ⑤ 類型選「Web 應用程式」
+       - 執行身分：我（你的帳號）
+       - 存取者：所有人
+    ⑥ 點「部署」→ 複製「Web 應用程式 URL」
+
+  步驟 3：貼上 URL
+    將上面複製的 URL 貼到下方 SCRIPT_URL 變數中：
+-->
+
+<style>
+  :root {
+    --deep:    #0C2340;
+    --ocean:   #0A3D62;
+    --wave:    #0369A1;
+    --sky:     #0EA5E9;
+    --light:   #E0F2FE;
+    --sunset:  #EA580C;
+    --coral:   #FB923C;
+    --teal:    #0D9488;
+    --white:   #FFFFFF;
+    --off:     #F8FAFC;
+    --lgray:   #CBD5E1;
+    --muted:   #94A3B8;
+    --slate:   #475569;
+    --dark1:   #1E293B;
+    --radius:  10px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Noto Sans TC", "PingFang TC", sans-serif;
+    background: var(--off);
+    color: var(--dark1);
+    min-height: 100vh;
+  }
+
+  /* ── HEADER ── */
+  .header {
+    background: var(--deep);
+    padding: 1.75rem 2rem 0;
+    position: relative;
+    overflow: hidden;
+  }
+  .header-eyebrow {
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    color: var(--coral);
+    font-weight: 600;
+    margin-bottom: 6px;
+  }
+  .header-title {
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: var(--white);
+    margin-bottom: 5px;
+  }
+  .header-meta {
+    display: flex;
+    gap: 1.25rem;
+    flex-wrap: wrap;
+    margin-bottom: 1.5rem;
+  }
+  .header-meta span {
+    font-size: 12px;
+    color: var(--light);
+    opacity: 0.85;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+  .header-wave {
+    display: block;
+    width: 100%;
+    margin-bottom: -1px;
+  }
+
+  /* ── STEP BAR ── */
+  .stepbar {
+    background: var(--white);
+    border-bottom: 1px solid var(--lgray);
+    display: flex;
+    padding: 0 1rem;
+  }
+  .step-item {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 11px 4px;
+    gap: 4px;
+    position: relative;
+  }
+  .step-item:not(:last-child)::after {
+    content: "";
+    position: absolute;
+    top: 22px;
+    left: calc(50% + 13px);
+    right: calc(-50% + 13px);
+    height: 1px;
+    background: var(--lgray);
+  }
+  .step-dot {
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 600;
+    background: #F1F5F9;
+    color: var(--slate);
+    border: 1px solid var(--lgray);
+    transition: all 0.2s;
+  }
+  .step-item.active .step-dot {
+    background: var(--wave);
+    color: var(--white);
+    border-color: var(--wave);
+  }
+  .step-item.done .step-dot {
+    background: var(--teal);
+    color: var(--white);
+    border-color: var(--teal);
+  }
+  .step-label {
+    font-size: 11px;
+    color: var(--slate);
+    transition: color 0.2s;
+  }
+  .step-item.active .step-label { color: var(--wave); font-weight: 600; }
+  .step-item.done .step-label   { color: var(--teal); }
+
+  /* ── FORM BODY ── */
+  .form-body { max-width: 720px; margin: 0 auto; padding: 2rem 1.25rem 5rem; }
+
+  .section { margin-bottom: 2.25rem; }
+  .section-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--dark1);
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--lgray);
+    margin-bottom: 1.25rem;
+  }
+  .section-title::before {
+    content: "";
+    width: 3px;
+    height: 16px;
+    background: var(--wave);
+    border-radius: 0;
+    flex-shrink: 0;
+  }
+
+  .field { margin-bottom: 1.2rem; }
+  .field label {
+    display: block;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--slate);
+    margin-bottom: 6px;
+  }
+  .field label .req { color: #E11D48; margin-left: 3px; }
+  .field-hint {
+    font-size: 11.5px;
+    color: var(--muted);
+    margin-top: 4px;
+    line-height: 1.5;
+  }
+
+  input[type="text"],
+  input[type="email"],
+  input[type="tel"],
+  textarea,
+  select {
+    width: 100%;
+    padding: 9px 13px;
+    border: 1px solid var(--lgray);
+    border-radius: 7px;
+    font-size: 14px;
+    font-family: inherit;
+    color: var(--dark1);
+    background: var(--white);
+    transition: border-color 0.15s, box-shadow 0.15s;
+    outline: none;
+    appearance: none;
+  }
+  input:focus, textarea:focus, select:focus {
+    border-color: var(--wave);
+    box-shadow: 0 0 0 3px rgba(3,105,161,0.12);
+  }
+  textarea { resize: vertical; min-height: 90px; }
+
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+  /* ── TIER CARDS ── */
+  .tier-group { margin-bottom: 1rem; }
+  .tier-group-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 7px;
+  }
+  .tier-group-name {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--slate);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+  .tier-group-range {
+    font-size: 11px;
+    color: var(--muted);
+    background: var(--off);
+    padding: 2px 9px;
+    border-radius: 10px;
+    border: 1px solid var(--lgray);
+  }
+  .tier-list { display: flex; flex-direction: column; gap: 5px; }
+
+  .tier-card {
+    display: flex;
+    align-items: flex-start;
+    gap: 11px;
+    padding: 10px 14px;
+    border: 1px solid var(--lgray);
+    border-radius: var(--radius);
+    cursor: pointer;
+    background: var(--white);
+    transition: border-color 0.15s, background 0.15s;
+  }
+  .tier-card:hover { border-color: var(--wave); }
+  .tier-card.selected {
+    border: 2px solid var(--wave);
+    background: #EFF6FF;
+  }
+  .tier-card input[type="radio"] { margin-top: 3px; flex-shrink: 0; accent-color: var(--wave); }
+  .tier-card-body { flex: 1; min-width: 0; }
+  .tier-card-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 4px;
+  }
+  .tier-price { font-size: 14px; font-weight: 700; color: var(--dark1); }
+  .tier-label {
+    font-size: 11px;
+    color: var(--slate);
+    background: var(--off);
+    padding: 2px 9px;
+    border-radius: 10px;
+    border: 1px solid var(--lgray);
+  }
+  .tier-perks { font-size: 12px; color: var(--muted); margin-top: 3px; line-height: 1.45; }
+
+  /* ── COLLAB PILLS ── */
+  .pill-group { display: flex; flex-wrap: wrap; gap: 8px; }
+  .pill {
+    padding: 7px 18px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-family: inherit;
+    cursor: pointer;
+    border: 1px solid var(--lgray);
+    background: var(--white);
+    color: var(--slate);
+    transition: all 0.15s;
+  }
+  .pill:hover { border-color: var(--wave); color: var(--wave); }
+  .pill.active {
+    border: 2px solid var(--wave);
+    background: #EFF6FF;
+    color: var(--wave);
+    font-weight: 600;
+  }
+
+  /* ── BOOTH BOX ── */
+  .booth-box {
+    border: 1px solid var(--sky);
+    border-left: 3px solid var(--wave);
+    border-radius: var(--radius);
+    padding: 1.25rem;
+    margin-top: 1.25rem;
+    background: #EFF6FF;
+    display: none;
+  }
+  .booth-box.visible { display: block; }
+  .booth-box-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--wave);
+    margin-bottom: 1.1rem;
+  }
+
+  /* ── RADIO GRID ── */
+  .radio-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+  .radio-card {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    cursor: pointer;
+    padding: 8px 10px;
+    border: 1px solid var(--lgray);
+    border-radius: 7px;
+    background: var(--white);
+    transition: background 0.15s;
+  }
+  .radio-card input { accent-color: var(--wave); }
+  .radio-card:has(input:checked) { background: #EFF6FF; border-color: var(--wave); }
+
+  .radio-list { display: flex; flex-direction: column; gap: 8px; }
+  .radio-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    cursor: pointer;
+  }
+  .radio-row input { accent-color: var(--wave); }
+
+  /* ── INFO BOX ── */
+  .info-box {
+    background: var(--off);
+    border: 1px solid var(--lgray);
+    border-radius: var(--radius);
+    padding: 0.9rem 1.1rem;
+    font-size: 12px;
+    color: var(--slate);
+    line-height: 1.7;
+    margin-bottom: 1rem;
+  }
+
+  /* ── NAVIGATION ── */
+  .nav-bar {
+    display: flex;
+    gap: 12px;
+    padding: 0 1.25rem;
+    max-width: 720px;
+    margin: 0 auto;
+  }
+  .nav-bar-wrap {
+    position: sticky;
+    bottom: 0;
+    background: rgba(248,250,252,0.95);
+    border-top: 1px solid var(--lgray);
+    padding: 1rem 0;
+    backdrop-filter: blur(8px);
+  }
+  .btn {
+    padding: 10px 22px;
+    border-radius: var(--radius);
+    font-size: 14px;
+    font-weight: 600;
+    font-family: inherit;
+    cursor: pointer;
+    transition: opacity 0.15s, transform 0.1s;
+    border: none;
+  }
+  .btn:active { transform: scale(0.98); }
+  .btn-back {
+    flex: 1;
+    background: var(--white);
+    color: var(--slate);
+    border: 1px solid var(--lgray) !important;
+    border: none;
+  }
+  .btn-next {
+    flex: 2;
+    background: var(--wave);
+    color: var(--white);
+  }
+  .btn-next:hover { opacity: 0.92; }
+  .btn-submit {
+    flex: 2;
+    background: var(--teal);
+    color: var(--white);
+  }
+  .btn-submit:disabled { opacity: 0.55; cursor: not-allowed; }
+
+  /* ── SUCCESS ── */
+  .success-wrap {
+    max-width: 500px;
+    margin: 4rem auto;
+    text-align: center;
+    padding: 0 1.5rem;
+  }
+  .success-icon {
+    width: 64px;
+    height: 64px;
+    background: #D1FAE5;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1.25rem;
+  }
+  .success-icon svg { color: var(--teal); }
+  .success-title { font-size: 1.3rem; font-weight: 700; margin-bottom: 8px; }
+  .success-sub { font-size: 14px; color: var(--slate); line-height: 1.7; margin-bottom: 2rem; }
+  .summary-card {
+    background: var(--white);
+    border: 1px solid var(--lgray);
+    border-radius: var(--radius);
+    padding: 1.25rem 1.5rem;
+    text-align: left;
+  }
+  .summary-row {
+    display: flex;
+    gap: 12px;
+    font-size: 13px;
+    margin-bottom: 6px;
+  }
+  .summary-label { color: var(--muted); min-width: 68px; }
+  .summary-val { color: var(--dark1); font-weight: 500; }
+
+  /* ── ERROR ── */
+  .error-msg {
+    font-size: 12px;
+    color: #E11D48;
+    margin-top: 4px;
+    display: none;
+  }
+  .field.has-error input,
+  .field.has-error textarea {
+    border-color: #E11D48;
+    box-shadow: 0 0 0 3px rgba(225,29,72,0.1);
+  }
+  .field.has-error .error-msg { display: block; }
+
+  @media (max-width: 500px) {
+    .grid2 { grid-template-columns: 1fr; }
+    .radio-grid { grid-template-columns: 1fr; }
+    .header-title { font-size: 1.3rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ─── HEADER ─────────────────────────────── -->
+<div class="header">
+  <div class="header-eyebrow">OURSEA CHILL FEST 2026 · 招商合作</div>
+  <div class="header-title">2026 濱海搖滾音樂祭</div>
+  <div class="header-meta">
+    <span>
+      <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M8 6v6m8-6v6M3 11h18M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+      2026.08.15 – 08.16
+    </span>
+    <span>
+      <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+      台中港三井 OUTLET PARK
+    </span>
+  </div>
+  <svg class="header-wave" viewBox="0 0 720 28" xmlns="http://www.w3.org/2000/svg">
+    <path d="M0,8 C80,0 180,20 300,10 C420,0 520,20 640,10 C680,6 700,14 720,8 L720,28 L0,28 Z" fill="#F8FAFC"/>
+  </svg>
+</div>
+
+<!-- ─── STEP BAR ─────────────────────────────── -->
+<div class="stepbar" id="stepbar">
+  <div class="step-item active" data-step="0">
+    <div class="step-dot">1</div>
+    <div class="step-label">基本資料</div>
+  </div>
+  <div class="step-item" data-step="1">
+    <div class="step-dot">2</div>
+    <div class="step-label">合作意向</div>
+  </div>
+  <div class="step-item" data-step="2">
+    <div class="step-dot">3</div>
+    <div class="step-label">品牌介紹</div>
+  </div>
+</div>
+
+<!-- ─── FORM PAGES ─────────────────────────────── -->
+<div class="form-body">
+
+  <!-- PAGE 0: 基本資料 -->
+  <div class="page" id="page-0">
+    <div class="section">
+      <div class="section-title">品牌 / 公司資訊</div>
+      <div class="field" id="f-brandName">
+        <label>品牌或公司名稱 <span class="req">*</span></label>
+        <input type="text" id="brandName" placeholder="例：濱海咖啡有限公司" />
+        <div class="error-msg">此欄位為必填</div>
+      </div>
+      <div class="field">
+        <label>統一編號</label>
+        <input type="text" id="ubn" placeholder="12345678" />
+        <div class="field-hint">個人工作室或自由品牌可略</div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-title">主要聯絡窗口</div>
+      <div class="field" id="f-contact">
+        <label>聯絡人姓名 <span class="req">*</span></label>
+        <input type="text" id="contact" placeholder="姓名" />
+        <div class="error-msg">此欄位為必填</div>
+      </div>
+      <div class="grid2">
+        <div class="field" id="f-phone">
+          <label>聯絡電話 <span class="req">*</span></label>
+          <input type="tel" id="phone" placeholder="0912-345-678" />
+          <div class="error-msg">此欄位為必填</div>
+        </div>
+        <div class="field" id="f-email">
+          <label>電子信箱 <span class="req">*</span></label>
+          <input type="email" id="email" placeholder="email@brand.com" />
+          <div class="error-msg">請輸入有效 Email</div>
+        </div>
+      </div>
+      <div class="field" id="f-social">
+        <label>社群平台 / 品牌官網連結 <span class="req">*</span></label>
+        <input type="text" id="social" placeholder="https://instagram.com/yourbrand" />
+        <div class="field-hint">請至少填寫一個，協助我們初步了解品牌形象</div>
+        <div class="error-msg">此欄位為必填</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PAGE 1: 合作意向 -->
+  <div class="page" id="page-1" style="display:none;">
+    <div class="section">
+      <div class="section-title">贊助等級</div>
+
+      <div class="tier-group">
+        <div class="tier-group-header">
+          <span class="tier-group-name">協會會員級距</span>
+          <span class="tier-group-range">NT$5,000–30,000</span>
+        </div>
+        <div class="tier-list" id="tier-member"></div>
+      </div>
+      <div class="tier-group">
+        <div class="tier-group-header">
+          <span class="tier-group-name">品牌露出級距</span>
+          <span class="tier-group-range">NT$50,000–200,000</span>
+        </div>
+        <div class="tier-list" id="tier-brand"></div>
+      </div>
+      <div class="tier-group">
+        <div class="tier-group-header">
+          <span class="tier-group-name">冠名方案</span>
+          <span class="tier-group-range">NT$500,000+</span>
+        </div>
+        <div class="tier-list" id="tier-title"></div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-title">合作類型（可複選）</div>
+      <div class="pill-group" id="collabPills"></div>
+
+      <div class="booth-box" id="boothBox">
+        <div class="booth-box-title">市集攤位 — 補充資訊</div>
+        <div class="field">
+          <label>電力需求 <span class="req">*</span></label>
+          <div class="radio-grid" id="powerGrid"></div>
+        </div>
+        <div class="field">
+          <label>攤位面積需求 <span class="req">*</span></label>
+          <input type="text" id="boothSize" placeholder="例：3m × 3m，或「標準攤位 × 2」" />
+          <div class="field-hint">協助場地動線規劃</div>
+        </div>
+        <div class="field">
+          <label>主要販售商品品項 <span class="req">*</span></label>
+          <textarea id="boothItems" placeholder="例：手工飾品、文創商品、餐飲（不含酒精）、服飾配件..."></textarea>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-title">如何得知此次招商機會？</div>
+      <div class="radio-list" id="referralList"></div>
+    </div>
+  </div>
+
+  <!-- PAGE 2: 品牌介紹 -->
+  <div class="page" id="page-2" style="display:none;">
+    <div class="section">
+      <div class="section-title">品牌介紹</div>
+      <div class="field" id="f-brandIntro">
+        <label>品牌簡介 <span class="req">*</span></label>
+        <textarea id="brandIntro" placeholder="我們是..."></textarea>
+        <div class="field-hint">請簡述品牌背景、主要業務及特色（建議 100 字以內）</div>
+        <div class="error-msg">此欄位為必填</div>
+      </div>
+      <div class="field">
+        <label>目標受眾 / 品牌核心族群</label>
+        <input type="text" id="audience" placeholder="例：18–30 歲音樂愛好者、喜愛戶外活動的都市青年" />
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-title">合作期待</div>
+      <div class="field" id="f-goal">
+        <label>此次合作的主要目標 <span class="req">*</span></label>
+        <textarea id="goal" placeholder="我們希望透過這次合作達成..."></textarea>
+        <div class="field-hint">例：品牌認知提升、銷售導流、社群追蹤成長、在地文化連結</div>
+        <div class="error-msg">此欄位為必填</div>
+      </div>
+      <div class="field">
+        <label>是否曾參與音樂祭或大型活動合作？</label>
+        <div class="radio-list" id="pastExpList"></div>
+      </div>
+      <div class="field">
+        <label>其他備註或特殊需求</label>
+        <textarea id="notes" placeholder="如有特殊安排需求或想了解的細節，歡迎在此說明..."></textarea>
+      </div>
+    </div>
+
+    <div class="info-box">
+      送出後，主辦團隊將於 <strong>3–5 個工作天</strong>內透過您填寫的 Email 或電話與您聯繫確認細節。如需加急處理請於備註欄說明。
+    </div>
+  </div>
+
+  <!-- SUCCESS PAGE -->
+  <div id="page-success" style="display:none;">
+    <div class="success-wrap">
+      <div class="success-icon">
+        <svg width="32" height="32" fill="none" stroke="#0D9488" stroke-width="2.5" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>
+        </svg>
+      </div>
+      <div class="success-title">申請已成功送出！</div>
+      <div class="success-sub" id="successMsg"></div>
+      <div class="summary-card" id="summaryCard"></div>
+    </div>
+  </div>
+
+</div><!-- end form-body -->
+
+<!-- ─── NAV BAR ─────────────────────────────── -->
+<div class="nav-bar-wrap" id="navWrap">
+  <div class="nav-bar">
+    <button class="btn btn-back" id="btnBack" style="display:none;" onclick="goBack()">← 上一步</button>
+    <div id="navSpacer" style="flex:1;"></div>
+    <button class="btn btn-next" id="btnNext" onclick="goNext()">下一步 →</button>
+    <button class="btn btn-submit" id="btnSubmit" style="display:none;" onclick="submitForm()">送出申請</button>
+  </div>
+</div>
+
+<script>
+// ── CONFIG (將你的 Apps Script URL 貼在此處) ──────────────────
+const SCRIPT_URL = "YOUR_GOOGLE_APPS_SCRIPT_URL_HERE";
+// ─────────────────────────────────────────────────────────────
+
+const TIERS = [
+  { id:"5k",   price:"NT$5,000",     label:"基礎協會會員費", group:"member", perks:"FANSI GO 商品上架 · 票券優先預購權" },
+  { id:"10k",  price:"NT$10,000",    label:"協會會員費",     group:"member", perks:"+ FB/IG 品牌露出 · 社群導流 · 現場文字露出" },
+  { id:"30k",  price:"NT$30,000",    label:"協會會員費",     group:"member", perks:"+ 活動回顧影片 ENDING CARD · 攤位優先選位" },
+  { id:"50k",  price:"NT$50,000",    label:"贊助費",         group:"brand",  perks:"+ 客製化品牌貼文 · 現場 LOGO 露出 × 2" },
+  { id:"100k", price:"NT$100,000",   label:"贊助費",         group:"brand",  perks:"+ 官方回顧影片 · 主持人口播宣傳" },
+  { id:"200k", price:"NT$200,000",   label:"贊助費",         group:"brand",  perks:"+ 客製化宣傳方案 · 全平台（ALL）曝光" },
+  { id:"500k", price:"NT$500,000",   label:"贊助費",         group:"title",  perks:"+ 潮汐舞臺冠名 · 客製化活動現場" },
+  { id:"150w", price:"NT$1,500,000", label:"贊助費（冠名）", group:"title",  perks:"客製化現場 · 全平台授權 · 最高曝光" },
+  { id:"300w", price:"NT$3,000,000", label:"贊助費（全冠名）",group:"title", perks:"全活動冠名 · 所有權益完整包含" },
+];
+
+const COLLAB = [
+  { id:"onsite", label:"現場品牌露出" },
+  { id:"social",  label:"社群行銷合作" },
+  { id:"booth",   label:"市集攤位" },
+  { id:"title",   label:"冠名合作" },
+  { id:"custom",  label:"客製化品牌企劃" },
+];
+
+const POWER = ["無需用電","110V 一般插座","220V 工業用電","需進一步確認"];
+const REFERRALS = ["社群媒體（FB / IG）","朋友或合作夥伴介紹","濱海祭主動聯繫","媒體報導","曾參與過濱海祭","其他"];
+const PAST_EXP = ["是，有相關經驗","否，這是第一次","不確定"];
+
+let state = {
+  step: 0,
+  tier: "",
+  collabTypes: [],
+  boothPower: "",
+  pastExp: "",
+  referral: "",
+};
+
+// ── INIT ──────────────────────────────────────
+function init() {
+  // Render tier cards
+  ["member","brand","title"].forEach(group => {
+    const el = document.getElementById("tier-" + group);
+    TIERS.filter(t => t.group === group).forEach(t => {
+      const card = document.createElement("label");
+      card.className = "tier-card";
+      card.id = "tier-card-" + t.id;
+      card.innerHTML = `
+        <input type="radio" name="tier" value="${t.id}" onchange="selectTier('${t.id}')">
+        <div class="tier-card-body">
+          <div class="tier-card-top">
+            <span class="tier-price">${t.price}</span>
+            <span class="tier-label">${t.label}</span>
+          </div>
+          <div class="tier-perks">${t.perks}</div>
+        </div>`;
+      el.appendChild(card);
+    });
+  });
+
+  // Render collab pills
+  const pillsEl = document.getElementById("collabPills");
+  COLLAB.forEach(c => {
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "pill";
+    btn.id = "pill-" + c.id;
+    btn.textContent = c.label;
+    btn.onclick = () => toggleCollab(c.id);
+    pillsEl.appendChild(btn);
+  });
+
+  // Power radio grid
+  const powerEl = document.getElementById("powerGrid");
+  POWER.forEach(p => {
+    const lbl = document.createElement("label");
+    lbl.className = "radio-card";
+    lbl.innerHTML = `<input type="radio" name="boothPower" value="${p}" onchange="state.boothPower=this.value"> ${p}`;
+    powerEl.appendChild(lbl);
+  });
+
+  // Referral list
+  const refEl = document.getElementById("referralList");
+  REFERRALS.forEach(r => {
+    const lbl = document.createElement("label");
+    lbl.className = "radio-row";
+    lbl.innerHTML = `<input type="radio" name="referral" value="${r}" onchange="state.referral=this.value"> ${r}`;
+    refEl.appendChild(lbl);
+  });
+
+  // Past experience list
+  const pastEl = document.getElementById("pastExpList");
+  PAST_EXP.forEach(v => {
+    const lbl = document.createElement("label");
+    lbl.className = "radio-row";
+    lbl.innerHTML = `<input type="radio" name="pastExp" value="${v}" onchange="state.pastExp=this.value"> ${v}`;
+    pastEl.appendChild(lbl);
+  });
+}
+
+function selectTier(id) {
+  state.tier = id;
+  TIERS.forEach(t => {
+    document.getElementById("tier-card-" + t.id).classList.toggle("selected", t.id === id);
+  });
+}
+
+function toggleCollab(id) {
+  const btn = document.getElementById("pill-" + id);
+  if (state.collabTypes.includes(id)) {
+    state.collabTypes = state.collabTypes.filter(x => x !== id);
+    btn.classList.remove("active");
+  } else {
+    state.collabTypes.push(id);
+    btn.classList.add("active");
+  }
+  document.getElementById("boothBox").classList.toggle("visible", state.collabTypes.includes("booth"));
+}
+
+// ── NAVIGATION ──────────────────────────────
+function updateNav() {
+  const s = state.step;
+  document.getElementById("btnBack").style.display   = s > 0 ? "block" : "none";
+  document.getElementById("navSpacer").style.display = s > 0 ? "none"  : "block";
+  document.getElementById("btnNext").style.display   = s < 2 ? "block" : "none";
+  document.getElementById("btnSubmit").style.display = s === 2 ? "block" : "none";
+
+  // Step bar
+  document.querySelectorAll(".step-item").forEach((el, i) => {
+    el.classList.toggle("active", i === s);
+    el.classList.toggle("done",   i < s);
+    const dot = el.querySelector(".step-dot");
+    dot.textContent = i < s ? "✓" : String(i + 1);
+  });
+}
+
+function validateStep0() {
+  let ok = true;
+  const check = (id, fieldId, extra) => {
+    const val = document.getElementById(id).value.trim();
+    const valid = extra ? extra(val) : val.length > 0;
+    document.getElementById(fieldId).classList.toggle("has-error", !valid);
+    if (!valid) ok = false;
+  };
+  check("brandName", "f-brandName");
+  check("contact",   "f-contact");
+  check("phone",     "f-phone");
+  check("email",     "f-email", v => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v));
+  check("social",    "f-social");
+  return ok;
+}
+
+function validateStep2() {
+  let ok = true;
+  const check = (id, fieldId) => {
+    const val = document.getElementById(id).value.trim();
+    document.getElementById(fieldId).classList.toggle("has-error", val.length === 0);
+    if (val.length === 0) ok = false;
+  };
+  check("brandIntro", "f-brandIntro");
+  check("goal",       "f-goal");
+  return ok;
+}
+
+function goNext() {
+  if (state.step === 0 && !validateStep0()) return;
+  showPage(state.step + 1);
+}
+function goBack() {
+  showPage(state.step - 1);
+}
+function showPage(n) {
+  document.getElementById("page-" + state.step).style.display = "none";
+  state.step = n;
+  document.getElementById("page-" + state.step).style.display = "block";
+  updateNav();
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+// ── SUBMIT ──────────────────────────────────
+async function submitForm() {
+  if (!validateStep2()) return;
+
+  const btn = document.getElementById("btnSubmit");
+  btn.disabled = true;
+  btn.textContent = "送出中…";
+
+  const payload = {
+    brandName:   document.getElementById("brandName").value.trim(),
+    ubn:         document.getElementById("ubn").value.trim(),
+    contact:     document.getElementById("contact").value.trim(),
+    phone:       document.getElementById("phone").value.trim(),
+    email:       document.getElementById("email").value.trim(),
+    social:      document.getElementById("social").value.trim(),
+    tier:        TIERS.find(t => t.id === state.tier) ? `${TIERS.find(t=>t.id===state.tier).price} ${TIERS.find(t=>t.id===state.tier).label}` : "未選擇",
+    collabTypes: state.collabTypes.map(id => COLLAB.find(c=>c.id===id)?.label).join("、"),
+    boothPower:  state.boothPower,
+    boothSize:   document.getElementById("boothSize").value.trim(),
+    boothItems:  document.getElementById("boothItems").value.trim(),
+    referral:    state.referral,
+    brandIntro:  document.getElementById("brandIntro").value.trim(),
+    audience:    document.getElementById("audience").value.trim(),
+    goal:        document.getElementById("goal").value.trim(),
+    pastExp:     state.pastExp,
+    notes:       document.getElementById("notes").value.trim(),
+  };
+
+  try {
+    if (SCRIPT_URL === "YOUR_GOOGLE_APPS_SCRIPT_URL_HERE") {
+      // Demo mode — skip network call
+      console.log("Demo mode. Payload:", payload);
+      await new Promise(r => setTimeout(r, 800));
+    } else {
+      await fetch(SCRIPT_URL, {
+        method: "POST",
+        body: JSON.stringify(payload),
+      });
+    }
+    showSuccess(payload);
+  } catch (err) {
+    btn.disabled = false;
+    btn.textContent = "送出申請";
+    alert("送出失敗，請稍後再試或直接聯繫主辦方。\n錯誤：" + err.message);
+  }
+}
+
+function showSuccess(p) {
+  ["page-0","page-1","page-2"].forEach(id => document.getElementById(id).style.display = "none");
+  document.getElementById("navWrap").style.display = "none";
+  document.getElementById("page-success").style.display = "block";
+
+  document.getElementById("successMsg").innerHTML =
+    `感謝 <strong>${p.brandName}</strong> 對 2026 濱海搖滾音樂祭的支持！<br>
+     我們將於 3–5 個工作天內透過 <strong>${p.email}</strong> 與您聯繫確認合作細節。`;
+
+  const tierData = TIERS.find(t => t.id === state.tier);
+  document.getElementById("summaryCard").innerHTML = `
+    <div style="font-size:11px;color:var(--muted);margin-bottom:10px;letter-spacing:0.05em;">申請摘要</div>
+    ${[
+      ["品牌名稱", p.brandName],
+      ["聯絡人",   p.contact],
+      ["電子信箱", p.email],
+      ["贊助等級", p.tier || "—"],
+      ["合作類型", p.collabTypes || "—"],
+    ].map(([l,v]) => `<div class="summary-row"><span class="summary-label">${l}</span><span class="summary-val">${v}</span></div>`).join("")}
+  `;
+
+  // Reset step bar
+  document.querySelectorAll(".step-item").forEach((el, i) => {
+    el.classList.remove("active");
+    el.classList.add("done");
+    el.querySelector(".step-dot").textContent = "✓";
+  });
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+// ── RUN ──────────────────────────────────────
+init();
+updateNav();
+</script>
+</body>
+</html>
