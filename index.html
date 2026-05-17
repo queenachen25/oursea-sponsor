@@ -592,7 +592,10 @@
 <div class="page" id="page-1" style="display:none;">
   <div class="section">
     <div class="section-title">贊助方案總覽</div>
-    <img src="sponsor-tiers.png" alt="贊助方案對照表" style="width:100%;border-radius:8px;border:1px solid #CBD5E1;margin-bottom:0.5rem;" />
+    <img src="sponsor-tiers.png" alt="贊助方案對照表"
+  onclick="this.requestFullscreen ? this.requestFullscreen() : this.webkitRequestFullscreen()"
+  style="width:100%;border-radius:8px;border:1px solid #CBD5E1;margin-bottom:0.5rem;cursor:zoom-in;" />
+<p style="font-size:11px;color:#94A3B8;margin-top:4px;">點擊圖片可全螢幕放大</p>
     <p style="font-size:12px;color:#94A3B8;margin-top:6px;">請參考上表選擇適合的贊助等級，再於下方點選確認。</p>
   </div>
   <div class="section">
@@ -635,19 +638,23 @@
       </div>
 
       <div class="booth-box" id="boothBox">
-        <div class="booth-box-title">市集攤位 — 補充資訊</div>
+        <div class="booth-box-title">
+  市集攤位 — 攤位費 NT$5,000／日，部分贊助級距無需另外付費<br>
+  <span style="font-size:12px;font-weight:400;color:#475569;line-height:1.8;">
+    含：3米帳篷 × 1、長桌 × 1、塑膠椅 × 2、110V 5A 基本電力、攤牌及管理費
+  </span>
+</div>
         <div class="field">
           <label>電力需求 <span class="req">*</span></label>
           <div class="radio-grid" id="powerGrid"></div>
         </div>
         <div class="field">
-          <label>攤位面積需求 <span class="req">*</span></label>
-          <input type="text" id="boothSize" placeholder="例：3m × 3m，或「標準攤位 × 2」" />
-          <div class="field-hint">協助場地動線規劃</div>
+          <label>攤位其他需求</label>
+<input type="text" id="boothSize" placeholder="需要加訂幾桌幾椅等" />
         </div>
         <div class="field">
           <label>主要販售商品品項 <span class="req">*</span></label>
-          <textarea id="boothItems" placeholder="例：手工飾品、文創商品、餐飲（不含酒精）、服飾配件..."></textarea>
+          <textarea id="boothItems" placeholder="為避免競品，請簡單介紹販售的商品及售價區間"></textarea>
         </div>
       </div>
     </div>
