@@ -922,10 +922,12 @@ async function submitForm() {
       console.log("Demo mode. Payload:", payload);
       await new Promise(r => setTimeout(r, 800));
     } else {
-      await fetch(SCRIPT_URL, {
-        method: "POST",
-        body: JSON.stringify(payload),
-      });
+   await fetch(SCRIPT_URL, {
+  method: "POST",
+  mode: "no-cors",
+  headers: { "Content-Type": "text/plain" },
+  body: JSON.stringify(payload),
+});
     }
     showSuccess(payload);
   } catch (err) {
